@@ -79,6 +79,9 @@ def verOTP(request):
         land = Landlord.objects.get_or_create(aadharnum=aadharnum)
         ten = Tenant.objects.get_or_create(aadharnum=aadharnum)
 
+        land.token = token
+        ten.token = token
+
         return Response({'status': 'Y', token: token})
 
     return Response({'status': 'N', 'errCode': res['errCode']})

@@ -17,6 +17,8 @@ class Landlord(models.Model):
     country = models.CharField(max_length=500)
     pc = models.IntegerField()
     po = models.CharField(max_length=500)
+    token = models.CharField(max_length=500)
+    time = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return str(self.aadharnum)
@@ -39,6 +41,8 @@ class Tenant(models.Model):
     landlord = models.ForeignKey(Landlord, on_delete=models.CASCADE)
     request_code = models.IntegerField()
     is_req_active = models.BooleanField(default=False)
+    token = models.CharField(max_length=500)
+    time = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return str(self.aadharnum)
