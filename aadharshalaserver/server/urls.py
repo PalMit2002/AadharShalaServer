@@ -21,4 +21,5 @@ from aadharshalaserver.server import views
 urlpatterns = [
     path('get_address/', views.get_address),
     path('gen_otp/', views.genOTP),
+    path('ver_otp/', views.verOTP),
 ]

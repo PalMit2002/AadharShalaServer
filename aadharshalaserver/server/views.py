@@ -48,7 +48,7 @@ def genOTP(request):
     res = json.loads(response.text)
 
     if(res['status'] == 'Y'):
-        return Response({'status': 'Y', token: token})
+        return Response({'status': 'Y', 'token': token})
 
     return Response({'status': 'N', 'errCode': res['errCode']})
 
@@ -75,7 +75,7 @@ def verOTP(request):
 
     res = json.loads(response.text)
 
-    if(res['status'] == 'Y'):
+    if(res['status'] == 'y'):
         land = Landlord.objects.get_or_create(aadharnum=aadharnum)
         ten = Tenant.objects.get_or_create(aadharnum=aadharnum)
 
