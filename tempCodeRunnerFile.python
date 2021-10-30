@@ -1,0 +1,20 @@
+import uuid
+import requests
+import json
+
+aadharnum = "999972875177"
+token = str(uuid.uuid4())
+
+url = "https://stage1.uidai.gov.in/onlineekyc/getOtp/"
+
+payload = json.dumps({
+  "uid": aadharnum,
+  "txnId": token
+})
+headers = {
+  'Content-Type': 'application/json'
+}
+
+response = requests.request("POST", url, headers=headers, data=payload)
+
+print(json.loads(response.text))
