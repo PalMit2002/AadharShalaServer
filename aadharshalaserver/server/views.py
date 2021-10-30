@@ -12,7 +12,7 @@ from aadharshalaserver.server import serializers
 
 @api_view(['GET'])
 def update_server(request):
-    os.system('cmd /c git pull && systemctl restart uidai.service')
+    os.system('git pull && systemctl restart uidai.service')
     return Response({'status': "Successfully Updated"})
 
 
