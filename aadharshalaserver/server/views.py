@@ -4,9 +4,16 @@ from rest_framework.decorators import api_view, permission_classes
 import uuid
 import requests
 import json
+import os
 
 from aadharshalaserver.server.models import Landlord, Tenant
 from aadharshalaserver.server import serializers
+
+
+@api_view(['GET'])
+def update_server(request):
+    os.system('cmd /c git pull && systemctl restart uidai.service')
+    return Response({'status': "Successfully Updated"})
 
 
 @api_view(['GET'])
