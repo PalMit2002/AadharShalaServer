@@ -27,15 +27,7 @@ def checkToken(request):
             return Response({'status': 'N'})
 
     except:
-        try:
-            land = Landlord.objects.get(token=token)
-            t = time.time()
-            if land.token == token and abs(land.time - t) < 1800:
-                return Response({'status': 'Y'})
-            else:
-                return Response({'status': 'N'})
-        except:
-            return Response({'status': 'N'})
+        return Response({'status': 'N'})
 
 
 @api_view(['GET'])
