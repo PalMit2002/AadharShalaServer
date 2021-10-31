@@ -25,6 +25,7 @@ urlpatterns = [
     path('ver_tenant/', views.verTenant),
     path('get_landlord_tenants/', views.getLandTenants),
     path('get_landlord_address/', views.getLandAddr),
+    path('upt_tenant_addr/', views.uptTenAddr),
 
     path('update_server', views.update_server),
 ]

@@ -201,9 +201,7 @@ def verTenant(request):
         ten.isVerified = True
         ten.save()
 
-        landser = serializers.LandlordSerializer(land)
-
-        return Response({'status': 'Y', 'landlord': landser.data})
+        return Response({'status': 'Y'})
 
     else:
         return Response({'status': 'N', 'errCode': res['errCode']})
