@@ -6,7 +6,27 @@ AadhaarShala is a simple app, which uses the UIDAI APIs to authenticate the appl
 
 ### Setup
 #### Server Setup
+*Requirements:*
+- Python 3
+- pip installer
+
+*Setup:*
+- Clone this server repository ```git clone https://github.com/PalMit2002/AadharShalaServer.git```
+- In the virtual environment, install all the dependencies with: ```pip install -r requirements.txt```
+- Setup the database, with: ```python manage.py makemigrations```, then ```python manage.py migrate```
+- Run the server: ```python manage.py runserver <ip_addr of machine>:8000```
+
 #### App Setup
+*Requirements:*
+- Android Studio
+- Android Device / Android emulator
+
+*Setup:*
+- After the server is running, we have to change the ```ip_addr``` of the machine for the app to connect to the server.
+- Change the ```ip_addr``` of the server, in file ```src/com.example.aadharshala/Api.java```
+- Build the APK of the mobile app, and install into a mobile device. You can also use an emulator for testing.
+- Kindly ensure that the server and mobile app are connected on the same network.
+- After installation, you can open the app and test the solution.
 
 ### Approach
 ![Architecture Diagram - I](https://github.com/PalMit2002/AadharShalaServer/blob/main/images/im1.png?raw=true)
