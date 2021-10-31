@@ -18,7 +18,7 @@ class Landlord(models.Model):
     pc = models.IntegerField(null=True)
     po = models.CharField(max_length=500, null=True)
     token = models.CharField(max_length=5000, null=True)
-    time = models.DateTimeField(auto_now_add=True, null=True)
+    time = models.FloatField(null=True)
 
     def __str__(self):
         return str(self.aadharnum)
@@ -42,7 +42,7 @@ class Tenant(models.Model):
     request_code = models.IntegerField(null=True)
     is_req_active = models.BooleanField(default=False, null=True)
     token = models.CharField(max_length=5000, null=True)
-    time = models.DateTimeField(auto_now_add=True, null=True)
+    time = models.FloatField(null=True)
 
     def __str__(self):
         return str(self.aadharnum)

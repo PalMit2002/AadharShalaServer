@@ -85,8 +85,8 @@ def verOTP(request):
     res = json.loads(response.text)
 
     if(res['status'] == 'y'):
-        land = Landlord.objects.get_or_create(aadharnum=aadharnum)
-        ten = Tenant.objects.get_or_create(aadharnum=aadharnum)
+        land, landc = Landlord.objects.get_or_create(aadharnum=aadharnum)
+        ten, tenc = Tenant.objects.get_or_create(aadharnum=aadharnum)
 
         land.token = token
         ten.token = token
@@ -99,7 +99,7 @@ def verOTP(request):
         land.save()
         ten.save()
 
-        return Response({'status': 'Y', token: token})
+        return Response({'status': 'Y', 'token': token})
 
     return Response({'status': 'N', 'errCode': res['errCode']})
 

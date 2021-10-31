@@ -22,5 +22,6 @@ urlpatterns = [
     path('get_address/', views.get_address),
     path('gen_otp/', views.genOTP),
     path('ver_otp/', views.verOTP),
+    path('send_req_land/', views.sendReqLandlord),
     path('update_server', views.update_server),
 ]
