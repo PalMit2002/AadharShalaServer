@@ -8,7 +8,8 @@ AadhaarShala is a simple app, which uses the UIDAI APIs to authenticate the appl
 ##### Server Setup
 
 ### Approach
-[Image for API flow]
+![Architecture Diagram - I](https://github.com/PalMit2002/AadharShalaServer/blob/main/images/im1.png?raw=true)
+![Architecture Diagram - II](https://github.com/PalMit2002/AadharShalaServer/blob/main/images/im2.png?raw=true)
 
 ### Security Considerations
 - GPS coordinates will be used, to get approximate location of the applicant, and converted to textual address using Google Reverse Geolocation API
