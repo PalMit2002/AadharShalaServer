@@ -45,7 +45,7 @@ class Tenant(models.Model):
     token = models.CharField(max_length=5000, null=True)
     time = models.FloatField(null=True)
 
-    reqCode = models.IntegerField(null=True)
+    reqCode = models.CharField(max_length=4, null=True)
 
     def __str__(self):
         return str(self.aadharnum)

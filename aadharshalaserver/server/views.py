@@ -139,7 +139,7 @@ def sendReqLandlord(request):
             aadharnum=landAadharNum)
         ten.landlord = land
 
-        reqCode = random.randint(1, 9999)
+        reqCode = str(random.randint(1, 9999))
         ten.reqCode = reqCode
 
         ten.save()
