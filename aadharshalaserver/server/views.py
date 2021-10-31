@@ -142,7 +142,7 @@ def verTenant(request):
     token = data['token']
     reqCode = data['reqCode']
 
-    land = Tenant.objects.get(token=token)
+    land = Landlord.objects.get(token=token)
     ten = Tenant.objects.get(reqCode=reqCode)
 
     landAadharNum = land.aadharnum
@@ -173,7 +173,6 @@ def verTenant(request):
         poa = resXml.find('UidData').find('Poa').attrib
 
         if('co' in poa):
-            print(poa["co"])
             land.co = poa['co']
         if('house' in poa):
             land.house = poa['house']
@@ -201,8 +200,6 @@ def verTenant(request):
 
         ten.isVerified = True
         ten.save()
-
-        print(land.co)
 
         landser = serializers.LandlordSerializer(land)
 
@@ -239,13 +236,21 @@ def getLandAddr(request):
     t = time.time()
 
     if land.token == token and land.time - t < 1800:
+        def getProperAdd(a):
+            spacer = ", "
+            if(a == None):
+                return ''
+            else:
+                return str(a)+spacer
+
         co = land.co
         house = land.house
-        addr = (land.street if land.street != None else '') + ' ' + (land.lm if land.lm != None else '') + ' ' + (land.loc if land.loc != None else '') + ' ' + (land.vtc if land.vtc != None else '') + ' ' + (land.subdist if land.subdist != None else '') + \
-            ' ' + (land.dist if land.dist != None else '') + ' ' + (land.state if land.state != None else '') + ' ' + \
-            (land.country if land.country != None else '') + \
-            ' ' + (land.pc if land.pc != None else '') + \
-            ' ' + (land.po if land.po != None else '')
+
+        addr = getProperAdd(land.street) + getProperAdd(land.lm) + getProperAdd(land.loc) + getProperAdd(land.vtc) + getProperAdd(land.subdist) + \
+            getProperAdd(land.dist) + getProperAdd(land.state) + \
+            getProperAdd(land.country) + \
+            getProperAdd(land.pc) + \
+            getProperAdd(land.po)
 
         return Response({'status': 'Y', 'co': co, 'house': house, 'addr': addr})
     else:
@@ -256,9 +261,8 @@ def getLandAddr(request):
 def uptTenAddr(request):
     data = request.data
     token = data['token']
-    aadharnum = data['aadharnum']
 
-    ten = Tenant.objects.get(aadharnum=aadharnum)
+    ten = Tenant.objects.get(token=token)
 
     t = time.time()
 
