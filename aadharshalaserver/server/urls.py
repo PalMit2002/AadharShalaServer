@@ -19,6 +19,7 @@ from aadharshalaserver.server import views
 
 
 urlpatterns = [
+    path('check_token/', views.checkToken),
     path('gen_otp/', views.genOTP),
     path('ver_otp/', views.verOTP),
     path('send_req_land/', views.sendReqLandlord),

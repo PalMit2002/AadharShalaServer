@@ -16,8 +16,9 @@ from aadharshalaserver.server import serializers
 @api_view(['POST'])
 def checkToken(request):
     data = request.data
+    token = data['token']
     try:
-        token = data['token']
+
         ten = Tenant.objects.get(token=token)
         t = time.time()
         if ten.token == token and abs(ten.time - t) < 1800:
@@ -26,7 +27,15 @@ def checkToken(request):
             return Response({'status': 'N'})
 
     except:
-        pass
+        try:
+            land = Landlord.objects.get(token=token)
+            t = time.time()
+            if land.token == token and abs(land.time - t) < 1800:
+                return Response({'status': 'Y'})
+            else:
+                return Response({'status': 'N'})
+        except:
+            return Response({'status': 'N'})
 
 
 @api_view(['GET'])
@@ -61,6 +70,9 @@ def genOTP(request):
 
         land.token = token
         ten.token = token
+
+        land.time = None
+        ten.time = None
 
         land.save()
         ten.save()
