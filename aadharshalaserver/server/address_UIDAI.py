@@ -30,4 +30,4 @@ def new_address(address):
 
 
 if __name__ == "__main__":
-    new_address(address)
+    print(new_address(address))
