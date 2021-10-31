@@ -5,9 +5,16 @@ import uuid
 import requests
 import json
 import time
+import os
 
 from aadharshalaserver.server.models import Landlord, Tenant
 from aadharshalaserver.server import serializers
+
+
+@api_view(['GET'])
+def update_server(request):
+    os.system('git pull && systemctl restart uidai.service')
+    return Response({'status': "Successfully Updated"})
 
 
 @api_view(['GET'])
