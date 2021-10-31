@@ -5,7 +5,8 @@ A lot of times, when people shift from one place to another, they need to provid
 AadhaarShala is a simple app, which uses the UIDAI APIs to authenticate the applicant and the introducer, and helps the applicant update his/her address with a simple OTP based authentication with the help of an introducer.
 
 ### Setup
-##### Server Setup
+#### Server Setup
+#### App Setup
 
 ### Approach
 ![Architecture Diagram - I](https://github.com/PalMit2002/AadharShalaServer/blob/main/images/im1.png?raw=true)
@@ -31,6 +32,7 @@ We have used a number of UIDAI APIs to implement and secure our solution. Some o
 
 ### User Models
 We are using 2 basic data models to store details related to the Applicant, and the Introducer:
+
 **Introducer**
 ```
 {
@@ -51,6 +53,7 @@ We are using 2 basic data models to store details related to the Applicant, and 
     "time": "2021-10-31T21:42:05.017403", # Time of registration (ISO Format)
 }
 ```
+
 **Applicant**
 ```
 {
@@ -78,3 +81,12 @@ We are using 2 basic data models to store details related to the Applicant, and 
 ### Mobile App Screenshots
 
 ### Internal APIs
+We have implemented various internal APIs, following the microservices principle to create self-sustaining and modular componenets of the solution. These APIs also enable us to expose the solution as a service to other businesses who want to help their customers use this service without the hassel of implementing the solution again from scratch. Some of the implemented APIs are:
+- *checkToken* - This API is used to authenticate the user of the app with a unique, time bound token. This helps in ensuring that intermediate rougue players cannot impersonate as an authentic user.
+- *genOTP* - This API helps in generation of OTP for authentication with the UIDAI servers. This helps us to authenticate users, and verify their Aadhaar credentials with the UIDAI servers.
+- *verOTP* - We use this API to verify the OTP with the UIDAI servers, once the user has sent the OTP to the server.
+- *sendReqLandlord* - This API is called when the Tenant (applicant) sends the request to get the address of the landlord (introducer). This request is then sent to the landlord for authentication and confirmation.
+- *verTenant* - This API, on the other hand is called when the Landlord (introducer) verifies the tenant (applicant). A notification is then sent to the applicant to notify them of this change.
+- *uptTenAddr* - After verification from the introducer, the applicant can do minor edits to the address, to reflect upon the difference in house numbers between the two users. This API is called when the applicant has updated their address. This API will eventually update the applicant address (after security checks) in the UIDAI servers.
+- *getLandTenants* - This API helps the introducers keep a track of all the requests that they receive.
+- *getLandAddr* - This API helps the applicants get the address of their introducer from the server, once approved by the introducers.
