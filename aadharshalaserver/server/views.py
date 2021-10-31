@@ -41,6 +41,7 @@ def genOTP(request):
     data = request.data
     aadharnum = data['username']
     token = str(uuid.uuid4())
+
     url = "https://stage1.uidai.gov.in/onlineekyc/getOtp/"
 
     payload = json.dumps({
@@ -101,3 +102,45 @@ def verOTP(request):
         return Response({'status': 'Y', token: token})
 
     return Response({'status': 'N', 'errCode': res['errCode']})
+
+
+@api_view(['POST'])
+def sendReqLandlord(request):
+    data = request.data
+    landAadharNum = data['landAadharNum']
+    tenAadharNum = data['tenAadharNum']
+
+    ten = Tenant.objects.get(aadharnum=tenAadharNum)
+
+    token = data['token']
+    t = time.time()
+
+    if ten.token == token and ten.time - t < 1800:
+        landToken = uuid.uuid4()
+
+        url = "https://stage1.uidai.gov.in/onlineekyc/getOtp/"
+
+        payload = json.dumps({
+            "uid": str(landAadharNum),
+            "txnId": landToken
+        })
+        headers = {
+            'Content-Type': 'application/json'
+        }
+
+        response = requests.request("POST", url, headers=headers, data=payload)
+
+        res = json.loads(response.text)
+
+        if(res['status'] == 'y'):
+            land = Landlord.objects.get_or_create(aadharnum=landAadharNum)
+            land.token = landToken
+            land.time = t
+
+            # Send notif to landlord
+
+        else:
+            return Response({'status': 'N', 'errCode': res['errCode']})
+
+    else:
+        return Response({'status': 'N', 'errCode': 'Invalid Token'})
