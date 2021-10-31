@@ -9,6 +9,8 @@ import time
 import os
 import random
 
+from address_UIDAI import new_address
+
 from aadharshalaserver.server.models import Landlord, Tenant
 from aadharshalaserver.server import serializers
 
@@ -303,4 +305,7 @@ def uptTenAddr(request):
 
 @api_view(['POST'])
 def reduceAddr(request):
-    pass
+    data = request.data
+    addr = data["address"]
+    new_addr = new_address(addr)
+    return Response({'new_addr': new_addr})
