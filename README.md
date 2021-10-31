@@ -20,4 +20,60 @@ AadhaarShala is a simple app, which uses the UIDAI APIs to authenticate the appl
 
 ### Improvements
 - We will use GPS coordinates of the applicant, and map it with the local address using Google's Reverse Geolocation API.
-- We can expose the server APIs, for 3rd party integrations, so that they can be implemented and offered by private parties, as a service to their customers
+- We can expose the server APIs, for 3rd party integrations, so that they can be implemented and offered by private parties, as a service to their customers.
+
+## Appendix
+### UIDAI API usage
+We have used a number of UIDAI APIs to implement and secure our solution. Some of the APIs used are listed below:
+- OTP Auth API - This API is used to authenticate the applicant and the introducer with their Aadhaar credentials. This API helps us in verifying the credibility of the users in a simple yet secure way, avoiding rogue users from scamming the system.
+- eKYC API - This API is used to get the address of the introducer, which is then sent to the applicant, for minor modifications. Other non-essential details of the users are not saved anywhere in the solution.
+
+### User Models
+We are using 2 basic data models to store details related to the Applicant, and the Introducer:
+**Introducer**
+```
+{
+    "aadharnum": "9999123456789012", # Aadhaar number / VID of the introducer
+    "co": "101", # 
+    "house": "404", # House Number of the introducer
+    "street": "04", # Street Number
+    "lm": "?",
+    "loc": "Locality", # Locality
+    "vtc": "?",
+    "subdist": "Powai", # Subdistrict
+    "dist": "Powai", # District
+    "state": "Maharashtra", # State
+    "country": "India", # Country
+    "pc": "", 
+    "po": "400076", # Postal code
+    "token": "05822338-55a7-416f-9e43-b00f905c943e", # Unique token (UUID4)
+    "time": "2021-10-31T21:42:05.017403", # Time of registration (ISO Format)
+}
+```
+**Applicant**
+```
+{
+    "aadharnum": "9999123456789012", # Aadhaar number / VID of the introducer
+    "mod_co": "101", # 
+    "mod_house": "404", # House Number of the introducer
+    "mod_street": "04", # Street Number
+    "mod_lm": "?",
+    "mod_loc": "Locality", # Locality
+    "mod_vtc": "?",
+    "mod_subdist": "Powai", # Subdistrict
+    "mod_dist": "Powai", # District
+    "mod_state": "Maharashtra", # State
+    "mod_country": "India", # Country
+    "mod_pc": "", 
+    "mod_po": "400076", # Postal code
+    "landlord": "101", # Landlord (introducer) object reference
+    "request_code": "5839", # Request code to maintain privacy
+    "is_req_active": "True", # Boolean showing if request is active
+    "token": "05822338-55a7-416f-9e43-b00f905c943e", # Unique token (UUID4)
+    "time": "2021-10-31T21:42:05.017403", # Time of registration (ISO Format)
+}
+```
+
+### Mobile App Screenshots
+
+### Internal APIs
