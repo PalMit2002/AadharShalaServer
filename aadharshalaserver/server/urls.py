@@ -28,5 +28,7 @@ urlpatterns = [
     path('get_landlord_address/', views.getLandAddr),
     path('upt_tenant_addr/', views.uptTenAddr),
 
+    path('reduce_addr/', views.reduceAddr),
+
     path('update_server', views.update_server),
 ]

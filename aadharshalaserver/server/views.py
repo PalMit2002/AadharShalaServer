@@ -69,7 +69,7 @@ def genOTP(request):
         land.save()
         ten.save()
 
-        return Response({'status': 'Y', 'token': token})
+        return Response({'status': 'Y', 'token': token, 'errCode': res['errCode']})
 
     return Response({'status': 'N', 'errCode': res['errCode']})
 
@@ -116,7 +116,7 @@ def verOTP(request):
         land.save()
         ten.save()
 
-        return Response({'status': 'Y', 'token': token})
+        return Response({'status': 'Y', 'token': token, 'errCode': res['errCode']})
 
     return Response({'status': 'N', 'errCode': res['errCode']})
 
@@ -299,3 +299,8 @@ def uptTenAddr(request):
 
     else:
         return Response({'status': 'N', 'errCode': 'Invalid Token'})
+
+
+@api_view(['POST'])
+def reduceAddr(request):
+    pass
