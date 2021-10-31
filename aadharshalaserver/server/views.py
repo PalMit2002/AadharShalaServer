@@ -13,6 +13,22 @@ from aadharshalaserver.server.models import Landlord, Tenant
 from aadharshalaserver.server import serializers
 
 
+@api_view(['POST'])
+def checkToken(request):
+    data = request.data
+    try:
+        token = data['token']
+        ten = Tenant.objects.get(token=token)
+        t = time.time()
+        if ten.token == token and abs(ten.time - t) < 1800:
+            return Response({'status': 'Y'})
+        else:
+            return Response({'status': 'N'})
+
+    except:
+        pass
+
+
 @api_view(['GET'])
 def update_server(request):
     os.system('git pull && systemctl restart uidai.service')
@@ -207,7 +223,7 @@ def verTenant(request):
         return Response({'status': 'N', 'errCode': res['errCode']})
 
 
-@api_view(['GET'])
+@api_view(['POST'])
 def getLandTenants(request):
     data = request.data
     token = data['token']
@@ -224,7 +240,7 @@ def getLandTenants(request):
         return Response({'status': 'N', 'errCode': 'Invalid Token'})
 
 
-@api_view(['GET'])
+@api_view(['POST'])
 def getLandAddr(request):
     data = request.data
     token = data['token']

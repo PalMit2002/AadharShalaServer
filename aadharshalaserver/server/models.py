@@ -4,7 +4,7 @@ from django.db import models
 
 
 class Landlord(models.Model):
-    aadharnum = models.PositiveBigIntegerField(primary_key=True)
+    aadharnum = models.CharField(max_length=12, primary_key=True)
     co = models.CharField(max_length=500, null=True)
     house = models.CharField(max_length=500, null=True)
     street = models.CharField(max_length=500, null=True)
@@ -25,7 +25,7 @@ class Landlord(models.Model):
 
 
 class Tenant(models.Model):
-    aadharnum = models.PositiveBigIntegerField(primary_key=True)
+    aadharnum = models.CharField(max_length=12, primary_key=True)
     mod_co = models.CharField(max_length=500, null=True)
     mod_house = models.CharField(max_length=500, null=True)
     # mod_street = models.CharField(max_length=500, null=True)
