@@ -4,6 +4,7 @@ from rest_framework.decorators import api_view, permission_classes
 import uuid
 import requests
 import json
+import time
 
 from aadharshalaserver.server.models import Landlord, Tenant
 from aadharshalaserver.server import serializers
@@ -81,6 +82,14 @@ def verOTP(request):
 
         land.token = token
         ten.token = token
+
+        t = time.time()
+
+        land.time = t
+        ten.time = t
+
+        land.save()
+        ten.save()
 
         return Response({'status': 'Y', token: token})
 

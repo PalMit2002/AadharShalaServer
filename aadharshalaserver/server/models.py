@@ -17,7 +17,7 @@ class Landlord(models.Model):
     country = models.CharField(max_length=500, null=True)
     pc = models.IntegerField(null=True)
     po = models.CharField(max_length=500, null=True)
-    token = models.CharField(max_length=500, null=True)
+    token = models.CharField(max_length=5000, null=True)
     time = models.DateTimeField(auto_now_add=True, null=True)
 
     def __str__(self):
@@ -41,7 +41,7 @@ class Tenant(models.Model):
     landlord = models.ForeignKey(Landlord, on_delete=models.CASCADE, null=True)
     request_code = models.IntegerField(null=True)
     is_req_active = models.BooleanField(default=False, null=True)
-    token = models.CharField(max_length=500, null=True)
+    token = models.CharField(max_length=5000, null=True)
     time = models.DateTimeField(auto_now_add=True, null=True)
 
     def __str__(self):
