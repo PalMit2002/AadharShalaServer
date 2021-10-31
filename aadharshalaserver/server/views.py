@@ -7,6 +7,7 @@ import requests
 import json
 import time
 import os
+import random
 
 from aadharshalaserver.server.models import Landlord, Tenant
 from aadharshalaserver.server import serializers
@@ -39,6 +40,15 @@ def genOTP(request):
     res = json.loads(response.text)
 
     if(res['status'] == 'y' or res['status'] == 'Y'):
+        land, landc = Landlord.objects.get_or_create(aadharnum=aadharnum)
+        ten, tenc = Tenant.objects.get_or_create(aadharnum=aadharnum)
+
+        land.token = token
+        ten.token = token
+
+        land.save()
+        ten.save()
+
         return Response({'status': 'Y', 'token': token})
 
     return Response({'status': 'N', 'errCode': res['errCode']})
@@ -47,9 +57,12 @@ def genOTP(request):
 @api_view(['POST'])
 def verOTP(request):
     data = request.data
-    aadharnum = data['username']
+
     token = data['token']
     otp = data['otp']
+
+    ten = Tenant.objects.get(token=token)
+    aadharnum = ten.aadharnum
 
     url = "https://stage1.uidai.gov.in/onlineekyc/getAuth/"
 
@@ -67,8 +80,10 @@ def verOTP(request):
     res = json.loads(response.text)
 
     if(res['status'] == 'y' or res['status'] == 'Y'):
-        land, landc = Landlord.objects.get_or_create(aadharnum=aadharnum)
-        ten, tenc = Tenant.objects.get_or_create(aadharnum=aadharnum)
+        land = Landlord.objects.get(aadharnum=aadharnum)
+        ten = Tenant.objects.get(aadharnum=aadharnum)
+
+        token = uuid.uuid4()
 
         land.token = token
         ten.token = token
@@ -90,14 +105,16 @@ def verOTP(request):
 def sendReqLandlord(request):
     data = request.data
     landAadharNum = data['landAadharNum']
-    tenAadharNum = data['tenAadharNum']
+
+    token = data['token']
+
+    ten = Tenant.objects.get(token=token)
+
+    tenAadharNum = ten.aadharnum
 
     if(landAadharNum == tenAadharNum):
         return Response({'status': 'N', 'errCode': 'Landlord and Tenant cannot be the same'})
 
-    ten = Tenant.objects.get(aadharnum=tenAadharNum)
-
-    token = data['token']
     t = time.time()
 
     if ten.token == token and ten.time - t < 1800:
@@ -106,9 +123,14 @@ def sendReqLandlord(request):
             aadharnum=landAadharNum)
         ten.landlord = land
 
+        reqCode = random.randint(1, 9999)
+        ten.reqCode = reqCode
+
+        ten.save()
+
         # Send notif to landlord
 
-        return Response({'status': 'Y'})
+        return Response({'status': 'Y', 'reqCode': reqCode})
 
     else:
         return Response({'status': 'N', 'errCode': 'Invalid Token'})
@@ -117,16 +139,17 @@ def sendReqLandlord(request):
 @api_view(['POST'])
 def verTenant(request):
     data = request.data
-    landAadharNum = data['landAadharNum']
-    tenAadharNum = data['tenAadharNum']
-
-    land = Tenant.objects.get(aadharnum=landAadharNum)
-    ten = Tenant.objects.get(aadharnum=tenAadharNum)
-
-    if(ten.landlord != land):
-        return Response({'status': 'N', 'errCode': 'Tenant is not Landlord'})
-
     token = data['token']
+    reqCode = data['reqCode']
+
+    land = Tenant.objects.get(token=token)
+    ten = Tenant.objects.get(reqCode=reqCode)
+
+    landAadharNum = land.aadharnum
+
+    if(ten.landlord.aadharnum != landAadharNum):
+        return Response({'status': 'N', 'errCode': 'Tenant is not of Landlord'})
+
     otp = data['otp']
 
     url = "https://stage1.uidai.gov.in/onlineekyc/getEkyc/"
@@ -150,6 +173,7 @@ def verTenant(request):
         poa = resXml.find('UidData').find('Poa').attrib
 
         if('co' in poa):
+            print(poa["co"])
             land.co = poa['co']
         if('house' in poa):
             land.house = poa['house']
@@ -178,7 +202,11 @@ def verTenant(request):
         ten.isVerified = True
         ten.save()
 
-        return Response({'status': 'Y'})
+        print(land.co)
+
+        landser = serializers.LandlordSerializer(land)
+
+        return Response({'status': 'Y', 'landlord': landser.data})
 
     else:
         return Response({'status': 'N', 'errCode': res['errCode']})
@@ -186,31 +214,38 @@ def verTenant(request):
 
 @api_view(['GET'])
 def getLandTenants(request):
-    reqData = request.data
-    aadharnum = reqData['aadharnum']
-    landlord = Landlord.objects.get(aadharnum=aadharnum)
-    tenants = Tenant.objects.filter(landlord=landlord)
-    tenants_ser = serializers.TenantSerializer(tenants, many=True)
-    return Response({'status': 'Y', 'tenants': tenants_ser.data})
+    data = request.data
+    token = data['token']
+    land = Landlord.objects.get(token=token)
+
+    t = time.time()
+
+    if land.token == token and land.time - t < 1800:
+        tenants = Tenant.objects.filter(landlord=land)
+        tenants_ser = serializers.TenantSerializer(tenants, many=True)
+        return Response({'status': 'Y', 'tenants': tenants_ser.data})
+
+    else:
+        return Response({'status': 'N', 'errCode': 'Invalid Token'})
 
 
 @api_view(['GET'])
 def getLandAddr(request):
     data = request.data
     token = data['token']
-    aadharnum = data['aadharnum']
 
-    ten = Tenant.objects.get(aadharnum=aadharnum)
-
+    land = Landlord.objects.get(token=token)
+    print(land.co)
     t = time.time()
 
-    if ten.token == token and ten.time - t < 1800:
-        land = ten.landlord
+    if land.token == token and land.time - t < 1800:
         co = land.co
         house = land.house
-        addr = land.street + ' ' + land.lm + ' ' + land.loc + ' ' + land.vtc + ' ' + land.subdist + \
-            ' ' + land.dist + ' ' + land.state + ' ' + \
-            land.country + ' ' + land.pc + ' ' + land.po
+        addr = (land.street if land.street != None else '') + ' ' + (land.lm if land.lm != None else '') + ' ' + (land.loc if land.loc != None else '') + ' ' + (land.vtc if land.vtc != None else '') + ' ' + (land.subdist if land.subdist != None else '') + \
+            ' ' + (land.dist if land.dist != None else '') + ' ' + (land.state if land.state != None else '') + ' ' + \
+            (land.country if land.country != None else '') + \
+            ' ' + (land.pc if land.pc != None else '') + \
+            ' ' + (land.po if land.po != None else '')
 
         return Response({'status': 'Y', 'co': co, 'house': house, 'addr': addr})
     else:

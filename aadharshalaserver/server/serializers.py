@@ -11,4 +11,4 @@ class LandlordSerializer(serializers.ModelSerializer):
 class TenantSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Tenant
-        fields = ['aadharnum']
+        fields = ['reqCode']

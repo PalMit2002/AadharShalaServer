@@ -7,11 +7,11 @@ from aadharshalaserver.server import models
 
 
 class TenantAdmin(ImportExportModelAdmin):
-    list_display = ('aadharnum',)
+    list_display = ('aadharnum', 'token', 'time', 'reqCode')
 
 
 class LandlordAdmin(ImportExportModelAdmin):
-    list_display = ('aadharnum',)
+    list_display = ('aadharnum', 'token', 'time')
 
 
 admin.site.register(models.Tenant, TenantAdmin)
