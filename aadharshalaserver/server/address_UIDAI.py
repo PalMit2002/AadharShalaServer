@@ -9,6 +9,7 @@ args = parser.parse_args()
 
 address = "pandesara, 208 A Avirbhav society 2 Near Daxeshwar Nagar, Rander chowk, Surat City, Rander, Surat"
 
+
 def new_address(address):
     ad = address.split(",")
 
@@ -17,15 +18,16 @@ def new_address(address):
             ad[i] = "xxxxx"
 
     try:
-        ad.remove("xxxxx") 
+        ad.remove("xxxxx")
     except:
         pass
 
     new_ad = ""
     for i in ad:
         new_ad += i + ","
-        
-    print(new_ad[:-1].title())
+
+    return new_ad[:-1].title()
+
 
 if __name__ == "__main__":
     new_address(address)
