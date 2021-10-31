@@ -14,5 +14,10 @@ class LandlordAdmin(ImportExportModelAdmin):
     list_display = ('aadharnum', 'token', 'time')
 
 
+class LogAdmin(ImportExportModelAdmin):
+    list_display = ('timestamp', 'event', 'msg', 'initiator')
+
+
 admin.site.register(models.Tenant, TenantAdmin)
 admin.site.register(models.Landlord, LandlordAdmin)
+admin.site.register(models.Log, LogAdmin)

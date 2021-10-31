@@ -7,7 +7,7 @@ parser.add_argument('--address', type=str, required=True)
 args = parser.parse_args()
 '''
 
-address = "pandesara, 208 A Avirbhav society 2 Near Daxeshwar Nagar, Rander chowk, Surat City, Rander, Surat"
+address = "something,something"
 
 
 def new_address(address):

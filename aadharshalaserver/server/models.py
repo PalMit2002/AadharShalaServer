@@ -49,3 +49,10 @@ class Tenant(models.Model):
 
     def __str__(self):
         return str(self.aadharnum)
+
+
+class Log(models.Model):
+    timestamp = models.DateTimeField(auto_now_add=True)
+    event = models.CharField(max_length=500)
+    msg = models.CharField(max_length=5000, null=True)
+    initiator = models.CharField(max_length=500, null=True)

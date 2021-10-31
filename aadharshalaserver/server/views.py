@@ -8,11 +8,24 @@ import json
 import time
 import os
 import random
+from cryptography.fernet import Fernet
 
-from address_UIDAI import new_address
+from aadharshalaserver.server.address_UIDAI import new_address
 
-from aadharshalaserver.server.models import Landlord, Tenant
+from aadharshalaserver.server.models import Landlord, Log, Tenant
 from aadharshalaserver.server import serializers
+
+
+def createLog(event, msg="", initiator=""):
+    Log.objects.create(event=event, msg=msg, initiator=initiator)
+
+
+def encrypt(s):
+    message = "my deep dark secret".encode()
+    key = Fernet.generate_key()
+    f = Fernet(key)
+    encrypted = f.encrypt(message)
+    return encrypted
 
 
 @api_view(['POST'])
@@ -24,11 +37,15 @@ def checkToken(request):
         ten = Tenant.objects.get(token=token)
         t = time.time()
         if ten.token == token and abs(ten.time - t) < 1800:
+            createLog("Token checked and is valid",
+                      initiator=encrypt(ten.aadharnum))
             return Response({'status': 'Y'})
         else:
+            createLog("Token has expired", initiator=encrypt(ten.aadharnum))
             return Response({'status': 'N'})
 
     except:
+        createLog("No user found for token")
         return Response({'status': 'N'})
 
 
@@ -71,8 +88,11 @@ def genOTP(request):
         land.save()
         ten.save()
 
+        createLog("OTP generated")
+
         return Response({'status': 'Y', 'token': token, 'errCode': res['errCode']})
 
+    createLog("OTP generation failed")
     return Response({'status': 'N', 'errCode': res['errCode']})
 
 
@@ -118,8 +138,11 @@ def verOTP(request):
         land.save()
         ten.save()
 
+        createLog("OTP verified")
+
         return Response({'status': 'Y', 'token': token, 'errCode': res['errCode']})
 
+    createLog("OTP verification failed")
     return Response({'status': 'N', 'errCode': res['errCode']})
 
 
@@ -135,6 +158,8 @@ def sendReqLandlord(request):
     tenAadharNum = ten.aadharnum
 
     if(landAadharNum == tenAadharNum):
+        createLog("Request Sent to Landlord failed",
+                  initiator=encrypt(tenAadharNum))
         return Response({'status': 'N', 'errCode': 'Landlord and Tenant cannot be the same'})
 
     t = time.time()
@@ -152,9 +177,12 @@ def sendReqLandlord(request):
 
         # Send notif to landlord
 
+        createLog("Request sent to landlord", initiator=encrypt(tenAadharNum))
         return Response({'status': 'Y', 'reqCode': reqCode})
 
     else:
+        createLog("Request sent to landlord failed",
+                  initiator=encrypt(tenAadharNum))
         return Response({'status': 'N', 'errCode': 'Invalid Token'})
 
 
@@ -170,6 +198,8 @@ def verTenant(request):
     landAadharNum = land.aadharnum
 
     if(ten.landlord.aadharnum != landAadharNum):
+        createLog("Verification of tenant failed due to invalid landlord",
+                  initiator=encrypt(landAadharNum))
         return Response({'status': 'N', 'errCode': 'Tenant is not of Landlord'})
 
     otp = data['otp']
@@ -223,9 +253,12 @@ def verTenant(request):
         ten.isVerified = True
         ten.save()
 
+        createLog("Tenant verified", initiator=encrypt(landAadharNum))
         return Response({'status': 'Y'})
 
     else:
+        createLog("Verification of tenant failed",
+                  initiator=encrypt(landAadharNum))
         return Response({'status': 'N', 'errCode': res['errCode']})
 
 
@@ -240,9 +273,14 @@ def getLandTenants(request):
     if land.token == token and land.time - t < 1800:
         tenants = Tenant.objects.filter(landlord=land)
         tenants_ser = serializers.TenantSerializer(tenants, many=True)
+
+        createLog("Tenants of landlord fetched",
+                  initiator=encrypt(land.aadharnum))
         return Response({'status': 'Y', 'tenants': tenants_ser.data})
 
     else:
+        createLog("Tenants of landlord failed",
+                  initiator=encrypt(land.aadharnum))
         return Response({'status': 'N', 'errCode': 'Invalid Token'})
 
 
@@ -272,8 +310,12 @@ def getLandAddr(request):
             getProperAdd(land.pc) + \
             getProperAdd(land.po)
 
+        createLog("Landlord address fetched",
+                  initiator=encrypt(land.aadharnum))
         return Response({'status': 'Y', 'co': co, 'house': house, 'addr': addr})
     else:
+        createLog("Landlord address fetch failed",
+                  initiator=encrypt(land.aadharnum))
         return Response({'status': 'N', 'errCode': 'Invalid Token'})
 
 
@@ -297,9 +339,12 @@ def uptTenAddr(request):
 
         # Send updated address to aadhar
 
+        createLog("Tenant address updated", initiator=encrypt(ten.aadharnum))
         return Response({'status': 'Y'})
 
     else:
+        createLog("Tenant address update failed",
+                  initiator=encrypt(ten.aadharnum))
         return Response({'status': 'N', 'errCode': 'Invalid Token'})
 
 
